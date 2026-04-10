@@ -31,6 +31,9 @@
 
 en:
   hello: 'Hello world'
+  customer_engine:
+    chatwoot_private_note:
+      body: "Customer Engine — suggested reply (draft):\n\n%{draft}"
   inbox:
     reauthorization:
       success: 'Channel reauthorized successfully'
@@ -486,3 +489,11 @@ en:
       subject: 'Finish setting up %{custom_domain}'
     ssl_status:
       custom_domain_not_configured: 'Custom domain is not configured'
+
+  mailers:
+    customer_engine:
+      risk_alert:
+        subject: 'Customer Engine alert — %{account_name}'
+      test_alert:
+        subject: 'Customer Engine test — %{account_name}'
+        body: 'This is a test alert from Customer Engine for %{account_name}.'

@@ -212,6 +212,21 @@ Rails.application.routes.draw do
               get :download
             end
           end
+          post 'ai_resolution/ingest_review', to: 'ai_resolution#ingest_review'
+          post 'ai_resolution/ingest_support', to: 'ai_resolution#ingest_support'
+          get 'ai_resolution/metrics', to: 'ai_resolution#metrics'
+          get 'ai_resolution/review_signals', to: 'ai_resolution#review_signals'
+          namespace :customer_engine, module: 'customer_engine' do
+            resource :settings, only: [:show, :update], controller: 'settings'
+            resources :connectors, only: [:index, :create, :update, :destroy] do
+              post :sync, on: :member
+            end
+            resources :resolution_attempts, only: [:index]
+            get 'conversations/:conversation_id/context', to: 'conversation_context#show'
+            post 'resolution_attempts/:id/approve', to: 'approvals#approve'
+            post 'resolution_attempts/:id/reject', to: 'approvals#reject'
+            post 'alerts/test', to: 'alerts#test'
+          end
           resources :reporting_events, only: [:index] if ChatwootApp.enterprise?
           resources :custom_attribute_definitions, only: [:index, :show, :create, :update, :destroy]
           resources :custom_filters, only: [:index, :show, :create, :update, :destroy]

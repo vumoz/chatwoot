@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_03_24_102005) do
+ActiveRecord::Schema[7.1].define(version: 2026_04_09_120000) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -143,6 +143,86 @@ ActiveRecord::Schema[7.1].define(version: 2026_03_24_102005) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_agent_capacity_policies_on_account_id"
+  end
+
+  create_table "ai_resolution_attempts", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "conversation_id"
+    t.bigint "ai_triage_decision_id", null: false
+    t.integer "status", default: 0, null: false
+    t.string "resolution_channel"
+    t.boolean "automated", default: false, null: false
+    t.float "customer_impact_score", default: 0.0, null: false
+    t.jsonb "actions_requested", default: {}, null: false
+    t.jsonb "actions_executed", default: {}, null: false
+    t.text "failure_reason"
+    t.datetime "started_at", null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "approval_reviewed_by_id"
+    t.datetime "approval_reviewed_at"
+    t.text "approval_note"
+    t.index ["account_id", "status", "created_at"], name: "idx_ai_resolution_attempts_on_status_time"
+    t.index ["account_id"], name: "index_ai_resolution_attempts_on_account_id"
+    t.index ["ai_triage_decision_id"], name: "index_ai_resolution_attempts_on_ai_triage_decision_id"
+    t.index ["approval_reviewed_by_id"], name: "index_ai_resolution_attempts_on_approval_reviewed_by_id"
+    t.index ["conversation_id"], name: "index_ai_resolution_attempts_on_conversation_id"
+  end
+
+  create_table "ai_review_signals", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "conversation_id"
+    t.string "source_platform", null: false
+    t.string "source_message_id"
+    t.integer "sentiment", default: 1, null: false
+    t.string "issue_category", null: false
+    t.integer "urgency", default: 0, null: false
+    t.float "risk_score", default: 0.0, null: false
+    t.jsonb "source_payload", default: {}, null: false
+    t.datetime "occurred_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "issue_category", "occurred_at"], name: "idx_ai_review_signals_on_account_issue_time"
+    t.index ["account_id", "source_platform", "occurred_at"], name: "idx_ai_review_signals_on_account_platform_time"
+    t.index ["account_id"], name: "index_ai_review_signals_on_account_id"
+    t.index ["account_id", "source_platform", "source_message_id"], name: "uniq_ai_review_signals_external_source", unique: true, where: "(source_message_id IS NOT NULL)"
+    t.index ["conversation_id"], name: "index_ai_review_signals_on_conversation_id"
+  end
+
+  create_table "ai_triage_decisions", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "conversation_id"
+    t.bigint "ai_review_signal_id"
+    t.string "decision_scope", default: "support", null: false
+    t.string "resolution_path", null: false
+    t.float "confidence_score", default: 0.0, null: false
+    t.integer "automation_level", default: 1, null: false
+    t.string "model_name"
+    t.string "model_version"
+    t.jsonb "decision_metadata", default: {}, null: false
+    t.jsonb "policy_snapshot", default: {}, null: false
+    t.datetime "decided_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "decision_scope", "decided_at"], name: "idx_ai_triage_decisions_on_scope_time"
+    t.index ["account_id"], name: "index_ai_triage_decisions_on_account_id"
+    t.index ["ai_review_signal_id"], name: "index_ai_triage_decisions_on_ai_review_signal_id"
+    t.index ["conversation_id"], name: "index_ai_triage_decisions_on_conversation_id"
+  end
+
+  create_table "customer_engine_connectors", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "provider", null: false
+    t.string "name", null: false
+    t.jsonb "settings", default: {}, null: false
+    t.integer "status", default: 1, null: false
+    t.datetime "last_synced_at"
+    t.text "last_error"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_customer_engine_connectors_on_account_id"
+    t.index ["account_id", "provider"], name: "idx_ce_connectors_on_account_provider"
   end
 
   create_table "applied_slas", force: :cascade do |t|
@@ -1291,6 +1371,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_03_24_102005) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "inboxes", "portals"
+  add_foreign_key "ai_resolution_attempts", "users", column: "approval_reviewed_by_id"
   create_trigger("accounts_after_insert_row_tr", :generated => true, :compatibility => 1).
       on("accounts").
       after(:insert).

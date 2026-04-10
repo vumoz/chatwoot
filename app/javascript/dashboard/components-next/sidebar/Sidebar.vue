@@ -683,6 +683,13 @@ const menuItems = computed(() => {
           to: accountScopedRoute('settings_applications'),
         },
         {
+          name: 'Settings Customer Engine',
+          label: t('SIDEBAR.CUSTOMER_ENGINE'),
+          icon: 'i-lucide-sparkles',
+          activeOn: ['customer_engine_settings_index'],
+          to: accountScopedRoute('customer_engine_settings_index'),
+        },
+        {
           name: 'Settings Audit Logs',
           label: t('SIDEBAR.AUDIT_LOGS'),
           icon: 'i-lucide-briefcase',

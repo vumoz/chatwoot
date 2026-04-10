@@ -23,6 +23,7 @@ import ShopifyOrdersList from 'dashboard/components/widgets/conversation/Shopify
 import SidebarActionsHeader from 'dashboard/components-next/SidebarActionsHeader.vue';
 import LinearIssuesList from 'dashboard/components/widgets/conversation/linear/IssuesList.vue';
 import LinearSetupCTA from 'dashboard/components/widgets/conversation/linear/LinearSetupCTA.vue';
+import CustomerEnginePanel from './customerEngine/CustomerEnginePanel.vue';
 
 const props = defineProps({
   conversationId: {
@@ -295,6 +296,18 @@ onMounted(() => {
               "
             >
               <ContactNotes :contact-id="contactId" />
+            </AccordionItem>
+          </div>
+          <div v-else-if="element.name === 'customer_engine'">
+            <AccordionItem
+              :title="$t('CONVERSATION_SIDEBAR.ACCORDION.CUSTOMER_ENGINE')"
+              :is-open="isContactSidebarItemOpen('is_customer_engine_open')"
+              compact
+              @toggle="
+                value => toggleSidebarUIState('is_customer_engine_open', value)
+              "
+            >
+              <CustomerEnginePanel :conversation-id="conversationId" />
             </AccordionItem>
           </div>
         </template>

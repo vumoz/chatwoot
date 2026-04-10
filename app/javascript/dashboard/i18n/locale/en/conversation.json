@@ -362,7 +362,21 @@
       "PREVIOUS_CONVERSATION": "Previous Conversations",
       "MACROS": "Macros",
       "LINEAR_ISSUES": "Linked Linear Issues",
-      "SHOPIFY_ORDERS": "Shopify Orders"
+      "SHOPIFY_ORDERS": "Shopify Orders",
+      "CUSTOMER_ENGINE": "Customer Engine"
+    },
+    "CUSTOMER_ENGINE": {
+      "LOADING": "Loading…",
+      "SUGGESTED": "Suggested reply",
+      "INSERT": "Insert into composer",
+      "PENDING": "Pending approval",
+      "APPROVE": "Approve",
+      "REJECT": "Reject",
+      "TIMELINE": "Audit timeline",
+      "EMPTY": "No Customer Engine activity for this conversation yet.",
+      "APPROVED": "Attempt approved.",
+      "REJECTED": "Attempt rejected.",
+      "REJECT_PROMPT": "Reason for rejection (required)"
     },
     "SHOPIFY": {
       "ORDER_ID": "Order #{id}",

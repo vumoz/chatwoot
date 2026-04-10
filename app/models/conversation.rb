@@ -112,6 +112,9 @@ class Conversation < ApplicationRecord
   has_many :conversation_participants, dependent: :destroy_async
   has_many :notifications, as: :primary_actor, dependent: :destroy_async
   has_many :attachments, through: :messages
+  has_many :ai_resolution_attempts, dependent: :destroy_async
+  has_many :ai_review_signals, dependent: :destroy_async
+  has_many :ai_triage_decisions, dependent: :destroy_async
   has_many :reporting_events, dependent: :destroy_async
 
   before_save :ensure_snooze_until_reset
